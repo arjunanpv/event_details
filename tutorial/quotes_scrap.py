@@ -6,7 +6,7 @@ class QuotesSpider(scrapy.Spider):
 	
 	def start_requests(self):
 		urls = [
-            'http://allevents.in/new_delhi/all'
+            'http://allevents.in/new_delhi/all',
 		]
 		headers = {
 			"authority": "allevents.in",
