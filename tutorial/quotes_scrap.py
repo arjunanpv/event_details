@@ -20,7 +20,7 @@ class QuotesSpider(scrapy.Spider):
 	def parse(self, response):
 		for quote in response.css('li.item'):
 			yield {
-				'event_name': quote.xpath('div.title::text').get()
+				'event_name': quote.css('div.title::text').get()
             }
 			
          
