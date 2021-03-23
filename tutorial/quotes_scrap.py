@@ -1,28 +1,25 @@
-import scrapy
-
-
-class QuotesSpider(scrapy.Spider):
-	name = 'quotes'
-	
-	def start_requests(self):
-		urls = [
-            'http://allevents.in/new_delhi/all',
-		]
-		headers = {
-			"authority": "allevents.in",
-			"accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-			"accept-encoding": "gzip, deflate, br",
-			"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36 Edg/89.0.774.54"
-		}
-		for url in urls:
-			yield scrapy.Request(url=url, headers=headers, callback=self.parse)
-			
-	def parse(self, response):
-		for quote in response.css('li.item'):
-			yield {
-				'event_name': quote.css('div.title::text').get()
-            }
-			
-         
-
-		
+from urllib.request import urlopen as uReq
+from bs4 import BeautifulSoup as soup
+	my_url = 'https://allevents.in/new%20delhi/all'
+		uClient = uReq(my_url)
+			page_html = uClient.read()
+			uClient.close()
+	page_soup = soup(page_html, "html.parser")
+	page_soup.find_all('div',attrs={'class':'meta-right'}) 
+		divlist = page_soup.find_all('div',attrs={'class':'meta-right'})
+		divlist[0].find('a')
+		anchortag = divlist[0].find('a')
+		anchortag.text
+		anchortag.text.strip()
+for div in divlist:  
+	anchortag = div.find('a')
+	anchortag_text = anchortag.text.strip()
+	print(anchortag_text)
+for div in divlist:  
+    place_span_tag = div.find('span',attrs={'class':'up-venue toh'})
+    place = place_span_tag.text.strip()
+    print (place)
+for div in divlist:  
+	start_date_span_tag = div.find('span',attrs={'class':'up-time-display'})
+    date_text = start_date_span_tag.text
+    print (date_text)
