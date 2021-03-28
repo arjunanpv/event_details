@@ -1,6 +1,8 @@
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 import datetime
+import json
+import csv
 
 my_url = 'https://allevents.in/new%20delhi/all'
 uClient = uReq(my_url)
@@ -11,7 +13,9 @@ page_soup.find_all('div',attrs={'class':'meta-right'})
 
 event_li_list = page_soup.find_all('li', attrs={"class": "item event-item box-link"})
 
+date_dict_in_obj = {}
 date_dict = {}
+
 for event_li in event_li_list:  # to display event name
 	anchortag = event_li.find('a')
 	anchortag_text = anchortag.text.strip()
@@ -22,10 +26,12 @@ for event_li in event_li_list:  # to display event name
 	print ("\nVenue : " + place)
 
 	start_date_span_tag = event_li.find('span',attrs={'class':'up-time-display'})
-	date_text = start_date_span_tag.text.strip()
-	date_time_obj = datetime.datetime.strptime(date_text, '%a %b %d %Y at %I:%M %p')
-	date_dict["start_date"] = date_time_obj
-	print ("\nDate : " + str(date_dict))
+	if start_date_span_tag:
+		date_text = start_date_span_tag.text.strip()
+		date_time_obj = datetime.datetime.strptime(date_text, '%a %b %d %Y at %I:%M %p')
+		date_dict_in_obj["start_date"] = date_time_obj
+		date_dict["start date"] = date_text
+		print ("\nDate : " + str(date_dict_in_obj))
 
 
 	event_url = event_li['data-share-link']
@@ -52,7 +58,16 @@ for event_li in event_li_list:  # to display event name
 	print("\nHost details :" + str(event_host_dict))
 	
 	print("--------------------------------------------\n--------------------------------------------")
+	
+	data_json = {"Event name": anchortag_text, "Event Place": place, "Event Date": date_dict, "Event DEscription": event_description, "Host details": event_host_dict}
 
+	
+	file = open('eventdetails.json','a')
+	file.write(json.dumps(data_json)+'\n')
+	file.close()
+	
+	
+	
 
 
 # print(event_li_list) 
